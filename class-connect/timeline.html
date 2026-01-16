@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassConnect - Timeline</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body id="timelinebody">
+
+    <div id="app-container" class="app-container">
+
+        <!-- Top Header -->
+        <header class="top-bar glass-panel scroll-away">
+            <h2 id="page-title">Timeline</h2>
+            <div class="user-profile">
+                <span id="user-role-badge" class="badge">Student</span>
+                <button id="btn-logout" class="icon-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="content-area">
+
+            <!-- Section: Timeline (Always Active) -->
+            <section id="section-timeline" class="section active">
+
+
+                <div id="timeline-feed" class="feed">
+                    <!-- Posts will be injected here -->
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav glass-panel">
+            <a href="timeline.html" class="nav-item active">
+                <i class="fas fa-stream"></i>
+                <span>Timeline</span>
+            </a>
+            <a href="schedules.html" class="nav-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="about.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>About</span>
+            </a>
+        </nav>
+
+        <!-- Admin Post Panel (Fixed Bottom) -->
+        <div id="admin-post-area" class="admin-post-area glass-panel hidden">
+            <div class="category-wrapper">
+                <button class="category-btn"><i class="fas fa-list"></i></button>
+                <select id="post-tag">
+                    <option value="General">General</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Schedule">Schedule Change</option>
+                </select>
+            </div>
+            <textarea id="post-content" placeholder="Type a message..." rows="1"></textarea>
+            <button id="btn-post" class="btn-send"><i class="fas fa-paper-plane"></i></button>
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClassConnect - Schedules</title>
+    <link rel="stylesheet" href="style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Merriweather:wght@300;400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body id="schedule-body">
+
+    <div id="app-container" class="app-container">
+
+        <!-- Top Header -->
+        <header class="top-bar glass-panel">
+            <h2 id="page-title">Class Schedule</h2>
+            <div class="user-profile">
+                <span id="user-role-badge" class="badge">Student</span>
+                <button id="btn-logout" class="icon-btn"><i class="fas fa-sign-out-alt"></i></button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="content-area">
+
+            <!-- Section: Schedule (Always Active) -->
+            <section id="section-schedule" class="section active">
+                <div class="schedule-container glass-panel">
+                    <div class="day-selector">
+                        <button class="day-btn active" data-day="Mon">Mon</button>
+                        <button class="day-btn" data-day="Tue">Tue</button>
+                        <button class="day-btn" data-day="Wed">Wed</button>
+                        <button class="day-btn" data-day="Thu">Thu</button>
+                        <button class="day-btn" data-day="Fri">Fri</button>
+                    </div>
+                    <div id="schedule-display" class="schedule-display">
+                        <!-- Timetable content -->
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav glass-panel">
+            <a href="timeline.html" class="nav-item">
+                <i class="fas fa-stream"></i>
+                <span>Timeline</span>
+            </a>
+            <a href="schedules.html" class="nav-item active">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Schedule</span>
+            </a>
+            <a href="about.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>About</span>
+            </a>
+        </nav>
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
