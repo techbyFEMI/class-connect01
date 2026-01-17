@@ -1,34 +1,71 @@
-
-// Mock Data
-const scheduleData = {
-    'Mon': [
-        { time: '8:00 AM - 10:00 AM', course: 'PHY 101', room: 'FBN LECTURE THEATRE' }
-    ],
-    'Tue': [
-        { time: '8:00 AM - 10:00 AM', course: 'CSC 101', room: 'SOC 3-IN-1 B' },
-        { time: '10:00 AM - 12:00 PM', course: 'GNS 103', room: 'FBN LECTURE THEATRE' },
-        { time: '2:00 PM - 4:00 PM', course: 'PHY 107 (PHYSICS LAB)', room: 'OBAKEKERE SOUTH GATE' }
-    ],
-    'Wed': [
-        { time: '2:00 PM - 4:00 PM', course: 'STA 111', room: 'SOC LECTURE THEATRE' }
-    ],
-    'Thu': [
-        { time: '10:00 AM - 12:00 PM', course: 'GST 111', room: '---' },
-        { time: '2:00 PM - 4:00 PM', course: 'MTH 101', room: 'ETF/HILLTOP' }
-    ],
-    'Fri': [
-        { time: '8:00 AM - 10:00 AM', course: 'STA 111', room: 'SOC LECTURE THEATRE' },
-        { time: '3:00 PM - 5:00 PM', course: 'MEE 101', room: 'ETF' }
-    ]
+// Mock Data - All departments
+const departmentSchedules = {
+    'IFT': {
+        'Mon': [
+            { time: '8:00 AM - 10:00 AM', course: 'PHY 101', room: 'FBN LECTURE THEATRE' }
+        ],
+        'Tue': [
+            { time: '8:00 AM - 10:00 AM', course: 'CSC 101', room: 'SOC 3-IN-1 B' }
+        ],
+        'Wed': [],
+        'Thu': [],
+        'Fri': []
+    },
+    'IFS': {
+        'Mon': [],
+        'Tue': [],
+        'Wed': [],
+        'Thu': [],
+        'Fri': []
+    },
+    'SEN': {
+        'Mon': [],
+        'Tue': [],
+        'Wed': [],
+        'Thu': [],
+        'Fri': []
+    },
+    'DTS': {
+        'Mon': [
+            { time: '8:00 AM - 10:00 AM', course: 'PHY 101', room: 'FBN LECTURE THEATRE' }
+        ],
+        'Tue': [
+            { time: '8:00 AM - 10:00 AM', course: 'CSC 101', room: 'SOC 3-IN-1 B' },
+            { time: '10:00 AM - 12:00 PM', course: 'GNS 103', room: 'FBN LECTURE THEATRE' },
+            { time: '2:00 PM - 4:00 PM', course: 'PHY 107 (PHYSICS LAB)', room: 'OBAKEKERE SOUTH GATE' }
+        ],
+        'Wed': [
+            { time: '2:00 PM - 4:00 PM', course: 'STA 111', room: 'SOC LECTURE THEATRE' }
+        ],
+        'Thu': [
+            { time: '10:00 AM - 12:00 PM', course: 'GST 111', room: '---' },
+            { time: '2:00 PM - 4:00 PM', course: 'MTH 101', room: 'ETF/HILLTOP' }
+        ],
+        'Fri': [
+            { time: '8:00 AM - 10:00 AM', course: 'STA 111', room: 'SOC LECTURE THEATRE' },
+            { time: '3:00 PM - 5:00 PM', course: 'MEE 101', room: 'ETF' }
+        ]
+    },
+    'CSC': {
+        'Mon': [],
+        'Tue': [],
+        'Wed': [],
+        'Thu': [],
+        'Fri': []
+    }
 };
 
-// Resource Data Removed
+let scheduleData = {};
+
+// Schedule data is now defined above.
+// Logic for selecting department is moved to initSchedule.
+
+
 
 document.addEventListener('DOMContentLoaded', () => {
     // Determine current page
     const isLoginPage = document.getElementById('login-form');
     const isTimelinePage = document.getElementById('timeline-feed');
-    // isResourcesPage removed
     const isSchedulePage = document.getElementById('schedule-display');
 
     if (isLoginPage) {
@@ -38,7 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initShared();
 
         if (isTimelinePage) initTimeline();
-        // if (isResourcesPage) initResources();
         if (isSchedulePage) initSchedule();
     }
 });
@@ -154,41 +190,34 @@ function initTimeline() {
 
     loadPosts();
 
-    // Scroll Logic
-    let lastScrollTop = 0;
-    const scrollThreshold = 10; // Minimum scroll to trigger change
+    // Tap Interaction Logic
+    let tapTimeout;
+    let lastTapTime = 0;
 
-    window.addEventListener('scroll', () => {
-        let currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-        if (currentScroll < 0) currentScroll = 0; // For Mobile or negative scrolling
+    document.addEventListener('click', (e) => {
+        // Ignore interactions with functional elements
+        if (e.target.closest('button, a, input, textarea, select, .dept-select')) return;
 
-        if (Math.abs(currentScroll - lastScrollTop) > scrollThreshold) {
+        const currentTime = new Date().getTime();
+        const timeDiff = currentTime - lastTapTime;
 
-            if (currentScroll > lastScrollTop) {
-                // SCROLL DOWN
-                // Nav -> Disappear
-                if (bottomNav) bottomNav.classList.add('nav-hidden');
-
-                // Panel -> Appear (if admin)
-                if (isAdmin && adminArea) {
-                    adminArea.classList.add('show-panel');
-                    // Add extra padding to body so content isn't covered? 
-                    // Or specifically to the feed container
-                }
-
-            } else {
-                // SCROLL UP
-                // Nav -> Appear
-                if (bottomNav) bottomNav.classList.remove('nav-hidden');
-
-                // Panel -> Disappear (if admin)
-                if (isAdmin && adminArea) {
-                    adminArea.classList.remove('show-panel');
-                }
+        if (timeDiff < 300 && timeDiff > 0) {
+            // Double Tap detected: Toggle Admin Panel
+            clearTimeout(tapTimeout);
+            if (isAdmin && adminArea) {
+                adminArea.classList.toggle('show-panel');
             }
-            lastScrollTop = currentScroll;
+        } else {
+            // Single Tap candidate: Toggle Navbar
+            clearTimeout(tapTimeout);
+            tapTimeout = setTimeout(() => {
+                if (bottomNav) {
+                    bottomNav.classList.toggle('nav-hidden');
+                }
+            }, 300);
         }
-    }, { passive: true });
+        lastTapTime = currentTime;
+    });
 
 
     if (btnPost) {
@@ -219,9 +248,28 @@ function initTimeline() {
 
 
 function initSchedule() {
+    const deptSelect = document.getElementById('dept-select');
     const dayBtns = document.querySelectorAll('.day-btn');
-    renderSchedule('Mon'); // Default
+    const display = document.getElementById('schedule-display');
 
+    if (display) {
+        display.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted)">CHOOSE YOUR DEPARTMENT</p>';
+    }
+
+    // Handle department selection
+    deptSelect.addEventListener('change', (e) => {
+        const selectedDept = e.target.value;
+        if (selectedDept) {
+            scheduleData = departmentSchedules[selectedDept];
+            renderSchedule('Mon'); // Reset to Monday
+            dayBtns.forEach(b => b.classList.remove('active'));
+            dayBtns[0].classList.add('active');
+        } else {
+            document.getElementById('schedule-display').innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-muted)">CHOOSE YOUR DEPARTMENT</p>';
+        }
+    });
+
+    // Handle day selection
     dayBtns.forEach(btn => {
         btn.addEventListener('click', () => {
             dayBtns.forEach(b => b.classList.remove('active'));

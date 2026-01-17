@@ -20,7 +20,16 @@
         <header class="top-bar glass-panel">
             <h2 id="page-title">Class Schedule</h2>
             <div class="user-profile">
-                <span id="user-role-badge" class="badge">Student</span>
+                <div class="department-selector">
+                  <select id="dept-select" class="dept-select">
+                    <option value="" disabled selected>STUDENT</option>
+                    <option value="IFT" id="deptift">IFT</option>
+                    <option value="IFS" id="deptifs">IFS</option>
+                    <option value="SEN" id="deptsen">SEN</option>
+                    <option value="DTS" id="deptdts">DTS</option>
+                    <option value="CSC" id="deptcsc">CSC</option>
+                  </select>
+                </div>
                 <button id="btn-logout" class="icon-btn"><i class="fas fa-sign-out-alt"></i></button>
             </div>
         </header>
