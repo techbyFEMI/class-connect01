@@ -207,15 +207,8 @@ function initTimeline() {
             if (isAdmin && adminArea) {
                 adminArea.classList.toggle('show-panel');
             }
-        } else {
-            // Single Tap candidate: Toggle Navbar
-            clearTimeout(tapTimeout);
-            tapTimeout = setTimeout(() => {
-                if (bottomNav) {
-                    bottomNav.classList.toggle('nav-hidden');
-                }
-            }, 300);
         }
+        // Removed single tap navbar toggle to keep it visible
         lastTapTime = currentTime;
     });
 
