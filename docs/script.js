@@ -190,9 +190,52 @@ function initTimeline() {
 
     loadPosts();
 
+    // --- Notification & Real-time Updates (Cross-tab) ---
+    if ("Notification" in window) {
+        // Request permission immediately using a user interaction would be better, 
+        // but we'll try on load or wait for the first click.
+        if (Notification.permission === "default") {
+            // We can request, but some browsers block strict auto-request. 
+            // We'll wrap it in a function we can trigger or just try.
+            Notification.requestPermission();
+        }
+    }
+
+    // Listen for changes from other tabs to simulate Server/Real-time behavior
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'classConnectPosts') {
+            loadPosts(); // Refresh the feed
+
+            // Check if it was a new post (simple check: length increased)
+            const newPosts = JSON.parse(e.newValue || '[]');
+            const oldPosts = JSON.parse(e.oldValue || '[]');
+
+            if (newPosts.length > oldPosts.length) {
+                const latestPost = newPosts[newPosts.length - 1]; // Assuming appended to end
+                // Only notify if we are not the author (optional, but storage event implies we are not the writer)
+                // Actually storage event DOES NOT fire on the tab that wrote it, so this IS "someone else"
+                showNotification(latestPost);
+            }
+            // Scroll to bottom
+            setTimeout(() => {
+                window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+            }, 100);
+        }
+    });
+
     // Tap Interaction Logic
     let tapTimeout;
     let lastTapTime = 0;
+
+
+    // Ensure we ask for permission on first interaction (browsers block auto-request)
+    document.body.addEventListener('click', () => {
+        if (Notification.permission === 'default') {
+            Notification.requestPermission().then(p => {
+                if (p === 'granted') console.log("Notifications enabled via interaction");
+            });
+        }
+    }, { once: true });
 
     document.addEventListener('click', (e) => {
         // Ignore interactions with functional elements
@@ -208,7 +251,6 @@ function initTimeline() {
                 adminArea.classList.toggle('show-panel');
             }
         }
-        // Removed single tap navbar toggle to keep it visible
         lastTapTime = currentTime;
     });
 
@@ -302,6 +344,14 @@ function savePost(post) {
     let posts = JSON.parse(localStorage.getItem('classConnectPosts') || '[]');
     posts.push(post); // Add to bottom
     localStorage.setItem('classConnectPosts', JSON.stringify(posts));
+
+    fetch('http://localhost:5000/api/auth/post', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(post),
+    });
 }
 
 function loadPosts() {
@@ -336,4 +386,19 @@ function loadPosts() {
             </div>
         `;
     }).join('');
+}
+// --- Notification Helper ---
+function showNotification(post) {
+    if (Notification.permission === "granted") {
+        const notif = new Notification(`New ${post.tag} Post`, {
+            body: post.content,
+            icon: 'futalogo.png', // Ensure this file is in the same directory
+            vibrate: [200, 100, 200]
+        });
+
+        notif.onclick = function () {
+            window.focus();
+            this.close();
+        };
+    }
 }
