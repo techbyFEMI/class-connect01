@@ -314,7 +314,7 @@ function initSchedule() {
     });
 }
 
-// --- Helper Functions ---
+// --- Helper Functions --
 
 
 
